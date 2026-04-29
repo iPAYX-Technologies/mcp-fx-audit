@@ -1,0 +1,8 @@
+{
+  "name": "iPayX FX Audit",
+  "description": "World's first forensic FX audit MCP server. Detect hidden bank fees and spreads in 30 seconds. Built for CFOs and AI Agents. FINTRAC MSB C10001283.",
+  "url": "https://hvujzsdwcoweirroubeh.supabase.co/functions/v1/mcp-server",
+  "category": "Finance",
+  "tags": ["finance", "fintech", "fx-audit", "hidden-fees"],
+  "pricing": "Freemium"
+}
