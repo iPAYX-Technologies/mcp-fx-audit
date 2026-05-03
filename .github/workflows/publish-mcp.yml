@@ -2,8 +2,10 @@ name: Publish to MCP Registry
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
+    paths:
+      - 'server.json'
 
 jobs:
   publish:
