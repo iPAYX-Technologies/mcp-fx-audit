@@ -1,27 +1,32 @@
 name: Publish to MCP Registry
 
 on:
-  workflow_dispatch: {}
   push:
-    tags: ["v*"]
+    tags:
+      - 'v*'
+  workflow_dispatch:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install mcp-publisher
-        run: |
-          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
-
-      - name: Authenticate to MCP Registry
-        run: ./mcp-publisher login github-oidc
-
-      - name: Publish server to MCP Registry
-        run: ./mcp-publisher publish
+      - name: Publish to MCP Registry
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const response = await fetch('https://registry.mcphub.io/publish', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${{ secrets.MCP_REGISTRY_TOKEN }}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                name: 'ipayx-fx-audit',
+                version: context.ref.replace('refs/tags/', ''),
+                url: 'https://wild-bird-a412.ybolduc.workers.dev/mcp'
+              })
+            });
+            console.log('Status:', response.status);
