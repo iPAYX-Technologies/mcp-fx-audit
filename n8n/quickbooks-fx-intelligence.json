@@ -1,0 +1,134 @@
+{
+  "name": "iPayX FX Intelligence Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "hours", "hoursInterval": 24 }] }
+      },
+      "name": "Daily Trigger 9AM EST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://hvujzsdwcoweirroubeh.supabase.co/functions/v1/quickbooks-fx-scanner",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$credentials.supabaseServiceKey}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": { "parameters": [{ "name": "auto", "value": "true" }] }
+      },
+      "name": "Scan QuickBooks FX",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [{ "value1": "={{$json.flagged}}", "operation": "larger", "value2": 0 }]
+        }
+      },
+      "name": "Any Flagged Transactions?",
+      "type": "n8n-nodes-base.if",
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://hvujzsdwcoweirroubeh.supabase.co/functions/v1/nvidia-analyze-spread",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$credentials.supabaseServiceKey}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "flagged_count", "value": "={{$json.flagged}}" },
+            { "name": "total_hidden_fees_cad", "value": "={{$json.total_hidden_fees_cad}}" },
+            { "name": "scanned", "value": "={{$json.scanned}}" },
+            { "name": "source", "value": "quickbooks" }
+          ]
+        }
+      },
+      "name": "Nemotron CFO Narrative",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [{ "value1": "={{$json.total_hidden_fees_cad}}", "operation": "larger", "value2": 1000 }]
+        }
+      },
+      "name": "Critical? (>$1000 CAD hidden)",
+      "type": "n8n-nodes-base.if",
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "fromEmail": "audit@ipayx.ai",
+        "toEmail": "yannick@ipayx.ai",
+        "subject": "🚨 iPayX Alert: ${{$json.total_hidden_fees_cad}} CAD in hidden FX fees detected",
+        "text": "=QuickBooks FX Scan Results\n\nScanned: {{$json.scanned}} transactions\nFlagged: {{$json.flagged}} issues\nTotal hidden fees: ${{$json.total_hidden_fees_cad}} CAD\n\nNemotron Analysis:\n{{$json.narrative}}\n\nView full report: https://app.ipayx.ai/war-room"
+      },
+      "name": "Email Alert - Critical",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [1340, 100]
+    },
+    {
+      "parameters": {
+        "url": "https://hvujzsdwcoweirroubeh.supabase.co/functions/v1/mcp-server",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$credentials.supabaseServiceKey}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "event", "value": "scan_complete" },
+            { "name": "scanned", "value": "={{$json.scanned}}" },
+            { "name": "flagged", "value": "={{$json.flagged}}" },
+            { "name": "total_hidden_fees_cad", "value": "={{$json.total_hidden_fees_cad}}" }
+          ]
+        }
+      },
+      "name": "Log to Supabase mcp_usage_log",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1340, 300]
+    }
+  ],
+  "connections": {
+    "Daily Trigger 9AM EST": { "main": [[{ "node": "Scan QuickBooks FX", "type": "main", "index": 0 }]] },
+    "Scan QuickBooks FX": { "main": [[{ "node": "Any Flagged Transactions?", "type": "main", "index": 0 }]] },
+    "Any Flagged Transactions?": {
+      "main": [
+        [{ "node": "Nemotron CFO Narrative", "type": "main", "index": 0 }],
+        [{ "node": "Log to Supabase mcp_usage_log", "type": "main", "index": 0 }]
+      ]
+    },
+    "Nemotron CFO Narrative": { "main": [[{ "node": "Critical? (>$1000 CAD hidden)", "type": "main", "index": 0 }]] },
+    "Critical? (>$1000 CAD hidden)": {
+      "main": [
+        [{ "node": "Email Alert - Critical", "type": "main", "index": 0 }],
+        [{ "node": "Log to Supabase mcp_usage_log", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": ["ipayx", "quickbooks", "fx-audit", "nemotron", "automation"]
+}
