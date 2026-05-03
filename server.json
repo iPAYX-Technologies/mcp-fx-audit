@@ -4,6 +4,7 @@
   "title": "iPayX FX Audit",
   "description": "Forensic FX audit engine. Detects hidden bank markups in real time. Compares any bank or broker rate against live mid-market rates (Twelve Data + OXR fallback). Returns spread in bps, audit score 1-10, and a certified forensic link. Designed for AI agents, CFOs, and treasury teams.",
   "version": "1.2.0",
+  "license": "MIT",
   "remotes": [
     {
       "type": "streamable-http",
