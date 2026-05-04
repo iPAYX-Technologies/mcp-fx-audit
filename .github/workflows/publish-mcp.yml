@@ -2,6 +2,7 @@ name: Publish to MCP Registry
 
 on:
   push:
+    branches: [main]
     tags:
       - 'v*'
   workflow_dispatch:
@@ -10,7 +11,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write   # Required for GitHub OIDC - no secret needed
+      id-token: write   # Required for GitHub OIDC
       contents: read
 
     steps:
@@ -23,6 +24,10 @@ jobs:
 
       - name: Authenticate to MCP Registry
         run: ./mcp-publisher login github-oidc
+        env:
+          GITHUB_REPOSITORY_OWNER: iPAYX-Technologies
 
       - name: Publish server to MCP Registry
         run: ./mcp-publisher publish
+        env:
+          GITHUB_REPOSITORY_OWNER: iPAYX-Technologies
