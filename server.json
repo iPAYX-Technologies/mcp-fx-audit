@@ -3,12 +3,30 @@
   "name": "io.github.Ipayx-stellar/fx-audit",
   "title": "iPayX FX Audit",
   "description": "Forensic FX audit. Detects hidden bank markups in real time. Returns spread bps + audit score 1-10.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "MIT",
   "remotes": [
     {
       "type": "streamable-http",
       "url": "https://wild-bird-a412.ybolduc.workers.dev/mcp"
+    }
+  ],
+  "tools": [
+    {
+      "name": "check_fx_rate",
+      "description": "Get live mid-market FX rate for any currency pair. Free, no auth required."
+    },
+    {
+      "name": "audit_transaction",
+      "description": "Audit a single FX transaction. Returns spread bps, hidden cost, and FX Score 0-10. 3 free/month per API key, then 402."
+    },
+    {
+      "name": "full_forensic_report",
+      "description": "Generate a full HTML forensic report on a batch of FX transactions. Paid tool — requires active subscription."
+    },
+    {
+      "name": "compare_fx_sources",
+      "description": "Compare FX rates across multiple market sources (Twelve Data, OXR, Perplexity Sonar). Paid tool."
     }
   ]
 }

@@ -1,0 +1,94 @@
+# iPayX FX Audit — Microsoft Copilot Studio Connector
+# Deploy this as a Custom Connector in Power Platform / Copilot Studio.
+# Endpoint: Cloudflare Worker (Streamable HTTP MCP)
+
+swagger: "2.0"
+info:
+  title: iPayX FX Audit MCP
+  description: |
+    Forensic FX audit for AI agents. Detects hidden bank markups vs live mid-market rates.
+    Returns spread bps + FX Score 0-10 + recommended action.
+    FINTRAC MSB C10001283. Built on MCP (Model Context Protocol).
+  version: "1.2.1"
+  contact:
+    name: iPayX Protocol
+    url: https://www.ipayx.ai
+    email: hello@ipayx.ai
+host: wild-bird-a412.ybolduc.workers.dev
+basePath: /mcp
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+
+# Auth: API key in Authorization header (Bearer)
+# Get yours at https://www.ipayx.ai/developers
+securityDefinitions:
+  apiKey:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: "Bearer YOUR_IPAYX_API_KEY"
+
+paths:
+  /:
+    post:
+      summary: MCP JSON-RPC 2.0 endpoint
+      description: |
+        All MCP tool calls go through this single endpoint using JSON-RPC 2.0.
+        Supported methods: tools/list, tools/call
+      operationId: mcpJsonRpc
+      security:
+        - apiKey: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - jsonrpc
+              - method
+              - id
+            properties:
+              jsonrpc:
+                type: string
+                default: "2.0"
+              method:
+                type: string
+                description: "tools/list | tools/call"
+                example: "tools/call"
+              id:
+                type: integer
+                default: 1
+              params:
+                type: object
+                description: |
+                  For tools/call: { name: "audit_transaction", arguments: { from_currency: "CAD", to_currency: "USD", amount_debited: 138250, amount_received: 100000, transaction_date: "2026-05-01" } }
+      responses:
+        200:
+          description: MCP tool result
+          schema:
+            type: object
+            properties:
+              jsonrpc:
+                type: string
+              id:
+                type: integer
+              result:
+                type: object
+              error:
+                type: object
+        402:
+          description: Free quota exhausted — upgrade at https://www.ipayx.ai/pricing
+        429:
+          description: Rate limit exceeded
+
+# --- Copilot Studio Setup Instructions ---
+# 1. In Power Platform: https://make.powerapps.com
+# 2. Go to Custom Connectors → Import from Swagger file → upload this file
+# 3. Security tab: set "API Key" header with your iPayX API key
+# 4. In Copilot Studio: Add Action → select this connector
+# 5. Use natural language: "Audit this FX transaction: I paid 138,250 CAD and received 100,000 USD on May 1st"
