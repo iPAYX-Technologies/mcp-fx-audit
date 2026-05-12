@@ -1,4 +1,4 @@
-<!-- mcp-name: io.github.ipayx-technologies/mcp-fx-audit -->
+<!-- mcp-name: io.github.iPAYX-Technologies/mcp-fx-audit -->
 
 # iPayX FX Audit MCP
 
