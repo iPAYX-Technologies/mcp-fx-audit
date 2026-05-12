@@ -1,3 +1,5 @@
+<!-- mcp-name: io.github.ipayx-technologies/mcp-fx-audit -->
+
 # iPayX FX Audit MCP
 
 **Expose hidden bank FX fees in 30 seconds. No signup required.**
