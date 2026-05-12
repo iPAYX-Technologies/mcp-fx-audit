@@ -1,21 +1,21 @@
 {
-        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
-        "name": "io.github.iPAYX-Technologies/mcp-fx-audit",
-        "description": "FX forensic audit MCP. Detects hidden bank markups on cross-border payments. FINTRAC MSB.",
-        "version": "1.3.3",
-        "repository": {
-                  "url": "https://github.com/iPAYX-Technologies/mcp-fx-audit",
-                  "source": "github"
-        },
-        "websiteUrl": "https://mcp.ipayx.ai",
-        "remotes": [
-                  {
-                              "type": "streamable-http",
-                              "url": "https://mcp.ipayx.ai"
-                  },
-                  {
-                              "type": "sse",
-                              "url": "https://mcp.ipayx.ai"
-                  }
-        ]
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+          "name": "io.github.iPAYX-Technologies/mcp-fx-audit",
+          "description": "FX forensic audit MCP. Detects hidden bank markups on cross-border payments. FINTRAC MSB.",
+          "version": "1.3.4",
+          "repository": {
+                      "url": "https://github.com/iPAYX-Technologies/mcp-fx-audit",
+                      "source": "github"
+          },
+          "websiteUrl": "https://mcp.ipayx.ai",
+          "remotes": [
+                      {
+                                    "type": "streamable-http",
+                                    "url": "https://mcp.ipayx.ai/mcp"
+                      },
+                      {
+                                    "type": "sse",
+                                    "url": "https://mcp.ipayx.ai/mcp"
+                      }
+          ]
 }
