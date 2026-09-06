@@ -6,7 +6,7 @@
 
 The world's first Model Context Protocol server for foreign exchange forensic auditing. Any AI agent (Claude, Perplexity, Cursor, Copilot) can audit FX transactions against mid-market rates in real time and generate FINTRAC-certified forensic reports.
 
-[![Smithery](https://smithery.ai/badge/@ybolduc/ipayx-fx-auditor)](https://smithery.ai/server/@ybolduc/ipayx-fx-auditor)
+[![LightNow](https://lightnow.ai/badge/io.github.iPAYX-Technologies/mcp-fx-audit)](https://lightnow.ai/servers/io.github.iPAYX-Technologies/mcp-fx-audit)
 [![MCP Registry](https://img.shields.io/badge/MCP%20Registry-Published-blue)](https://registry.modelcontextprotocol.io)
 
 **Live endpoint (Cloudflare):** `https://wild-bird-a412.ybolduc.workers.dev/mcp`
